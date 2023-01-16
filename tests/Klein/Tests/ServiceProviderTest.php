@@ -25,7 +25,7 @@ use Klein\Validator;
 class ServiceProviderTest extends AbstractKleinTest
 {
 
-    protected function getBasicServiceProvider()
+    protected function getBasicServiceProvider(): ServiceProvider
     {
         return new ServiceProvider(
             $request = new Request(),
@@ -261,6 +261,9 @@ class ServiceProviderTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRefresh()
     {
         $this->klein_app->respond(
@@ -282,9 +285,12 @@ class ServiceProviderTest extends AbstractKleinTest
         $this->assertLessThan(400, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testBack()
     {
-        $url = 'http://google.com/';
+        $url = 'https://google.com/';
 
         $request = new Request();
         $request->server()->set('HTTP_REFERER', $url);
@@ -308,6 +314,9 @@ class ServiceProviderTest extends AbstractKleinTest
         $this->assertLessThan(400, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testBackWithoutRefererSet()
     {
         $request = new Request();
@@ -342,6 +351,7 @@ class ServiceProviderTest extends AbstractKleinTest
 
     /**
      * NOTE: Also tests "yield()"
+     * @throws \Throwable
      */
     public function testRender()
     {
@@ -377,6 +387,9 @@ class ServiceProviderTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderChunked()
     {
         $test_data = array(
@@ -414,6 +427,9 @@ class ServiceProviderTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testPartial()
     {
         $test_data = array(
@@ -462,9 +478,6 @@ class ServiceProviderTest extends AbstractKleinTest
         $this->assertContains($test_callback, Validator::$methods);
     }
 
-    /**
-     * @expectedException \Klein\Exceptions\ValidationException
-     */
     public function testValidate()
     {
         $this->expectException(ValidationException::class);
@@ -485,7 +498,7 @@ class ServiceProviderTest extends AbstractKleinTest
     }
 
     /**
-     * @expectedException \Klein\Exceptions\ValidationException
+     * @throws \Throwable
      */
     public function testValidateParam()
     {
@@ -509,7 +522,7 @@ class ServiceProviderTest extends AbstractKleinTest
         $this->klein_app->dispatch();
     }
 
-    // Test ALL of the magic setter, getter, exists, and removal methods
+    // Test ALL the magic setter, getter, exists, and removal methods
     public function testMagicGetSetExistsRemove()
     {
         $test_data = array(

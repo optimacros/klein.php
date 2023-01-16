@@ -21,11 +21,11 @@ class HeaderDataCollectionTest extends AbstractKleinTest
 {
 
     /**
-     * Non existent key in the sample data
+     * Non-existent key in the sample data
      *
      * @type string
      */
-    protected static $nonexistent_key = 'non-standard-header';
+    protected static string $nonexistent_key = 'non-standard-header';
 
 
     /*
@@ -39,7 +39,7 @@ class HeaderDataCollectionTest extends AbstractKleinTest
      * @param array $sample_data
      * @return void
      */
-    protected function prepareSampleData(&$sample_data)
+    protected function prepareSampleData(array &$sample_data): void
     {
         if (isset($sample_data[static::$nonexistent_key])) {
             unset($sample_data[static::$nonexistent_key]);
@@ -58,7 +58,7 @@ class HeaderDataCollectionTest extends AbstractKleinTest
      *
      * @return array
      */
-    public function sampleDataProvider()
+    public function sampleDataProvider(): array
     {
         // Populate our sample data
         $sample_data = array(

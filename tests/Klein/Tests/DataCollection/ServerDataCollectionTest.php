@@ -29,7 +29,7 @@ class ServerDataCollectionTest extends AbstractKleinTest
      *
      * @return array
      */
-    public function sampleDataProvider()
+    public function sampleDataProvider(): array
     {
         // Populate our sample data
         $sample_data = array(

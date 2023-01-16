@@ -44,11 +44,14 @@ class ValidationsTest extends AbstractKleinTest
         }
     }
 
-    protected function validator($string, $error_message = null)
+    protected function validator($string, $error_message = null): Validator
     {
         return new Validator($string, $error_message);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testCustomValidationMessage()
     {
         $custom_message = 'This is a custom error message...';
@@ -73,6 +76,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testStringLengthExact()
     {
         $this->klein_app->respond(
@@ -101,6 +107,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testStringLengthRange()
     {
         $this->klein_app->respond(
@@ -159,6 +168,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testInt()
     {
         $this->klein_app->respond(
@@ -217,6 +229,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testFloat()
     {
         $this->klein_app->respond(
@@ -281,6 +296,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testEmail()
     {
         $this->klein_app->respond(
@@ -402,6 +420,9 @@ class ValidationsTest extends AbstractKleinTest
         $this->validator('string')->notRemoteIp();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testAlpha()
     {
         $this->klein_app->respond(
@@ -460,6 +481,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testAlnum()
     {
         $this->klein_app->respond(
@@ -518,6 +542,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testContains()
     {
         $this->klein_app->respond(
@@ -570,6 +597,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testChars()
     {
         $this->klein_app->respond(
@@ -616,6 +646,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRegex()
     {
         $this->klein_app->respond(
@@ -674,6 +707,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testNotRegex()
     {
         $this->klein_app->respond(
@@ -732,6 +768,9 @@ class ValidationsTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testCustomValidator()
     {
         // Add our custom validator
@@ -845,9 +884,6 @@ class ValidationsTest extends AbstractKleinTest
         $this->assertFalse($result);
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     */
     public function testValidatorThatDoesntExist()
     {
         $this->expectException(BadMethodCallException::class);

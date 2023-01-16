@@ -41,19 +41,19 @@ class RouteFactory extends AbstractRouteFactory
      * @param mixed $path
      * @return boolean
      */
-    protected function pathIsNull($path)
+    protected function pathIsNull(mixed $path): bool
     {
         return (static::NULL_PATH_VALUE === $path || null === $path);
     }
 
     /**
-     * Quick check to see whether or not to count the route
+     * Quick check to see whether to count the route
      * as a match when counting total matches
      *
      * @param string $path
      * @return boolean
      */
-    protected function shouldPathStringCauseRouteMatch($path)
+    protected function shouldPathStringCauseRouteMatch(string $path): bool
     {
         // Only consider a request to be matched when not using 'matchall'
         return !$this->pathIsNull($path);
@@ -62,17 +62,17 @@ class RouteFactory extends AbstractRouteFactory
     /**
      * Pre-process a path string
      *
-     * This method wraps the path string in a regular expression syntax baesd
+     * This method wraps the path string in a regular expression syntax based
      * on whether the string is a catch-all or custom regular expression.
      * It also adds the namespace in a specific part, based on the style of expression
      *
-     * @param string $path
+     * @param ?string $path
      * @return string
      */
-    protected function preprocessPathString($path)
+    protected function preprocessPathString(?string $path): string
     {
         // If the path is null, make sure to give it our match-all value
-        $path = (null === $path) ? static::NULL_PATH_VALUE : (string) $path;
+        $path = (null === $path) ? static::NULL_PATH_VALUE : $path;
 
         // If a custom regular expression (or negated custom regex)
         if ($this->namespace &&
@@ -100,7 +100,6 @@ class RouteFactory extends AbstractRouteFactory
             } else {
                 $path = '@^' . $this->namespace . $path;
             }
-
         } elseif ($this->namespace && $this->pathIsNull($path)) {
             // Empty route with namespace is a match-all
             $path = '@^' . $this->namespace . '(/|$)';
@@ -115,14 +114,14 @@ class RouteFactory extends AbstractRouteFactory
     /**
      * Build a Route instance
      *
-     * @param callable $callback    Callable callback method to execute on route match
-     * @param string $path          Route URI path to match
-     * @param string|array $method  HTTP Method to match
-     * @param boolean $count_match  Whether or not to count the route as a match when counting total matches
-     * @param string $name          The name of the route
+     * @param callable $callback Callable callback method to execute on route match
+     * @param string $path Route URI path to match
+     * @param string|array $method HTTP Method to match
+     * @param boolean $count_match Whether to count the route as a match when counting total matches
+     * @param string $name The name of the route
      * @return Route
      */
-    public function build($callback, $path = null, $method = null, $count_match = true, $name = null)
+    public function build(callable $callback, $path = null, $method = null, bool $count_match = true, $name = null): Route
     {
         return new Route(
             $callback,

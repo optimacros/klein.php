@@ -33,6 +33,8 @@ class ResponseCookieDataCollection extends DataCollection
      */
     public function __construct(array $cookies = array())
     {
+        parent::__construct($cookies);
+
         foreach ($cookies as $key => $value) {
             $this->set($key, $value);
         }
@@ -52,12 +54,11 @@ class ResponseCookieDataCollection extends DataCollection
      * suggested "$key" as the cookie's "domain" and passing in an
      * instance of a ResponseCookie as the "$value"
      *
+     * @param string $key The name of the cookie to set
+     * @param mixed $value The value of the cookie to set
      * @see DataCollection::set()
-     * @param string $key                   The name of the cookie to set
-     * @param ResponseCookie|string $value  The value of the cookie to set
-     * @return ResponseCookieDataCollection
      */
-    public function set($key, $value)
+    public function set(string $key, mixed $value): DataCollection
     {
         if (!$value instanceof ResponseCookie) {
             $value = new ResponseCookie($key, $value);

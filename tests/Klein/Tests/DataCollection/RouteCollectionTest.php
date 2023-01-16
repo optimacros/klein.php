@@ -30,7 +30,7 @@ class RouteCollectionTest extends AbstractKleinTest
      *
      * @return array
      */
-    public function sampleDataProvider()
+    public function sampleDataProvider(): array
     {
         $sample_route = new Route(
             function () {

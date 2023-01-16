@@ -29,28 +29,28 @@ class Validator
      *
      * @type array
      */
-    public static $methods = array();
+    public static array $methods = array();
 
     /**
      * The string to validate
      *
      * @type string
      */
-    protected $str;
+    protected string $str;
 
     /**
      * The custom exception message to throw on validation failure
      *
-     * @type string
+     * @type ?string
      */
-    protected $err;
+    protected ?string $err;
 
     /**
      * Flag for whether the default validation methods have been added or not
      *
      * @type boolean
      */
-    protected static $default_added = false;
+    protected static bool $default_added = false;
 
 
     /**
@@ -60,10 +60,10 @@ class Validator
     /**
      * Sets up the validator chain with the string and optional error message
      *
-     * @param string $str   The string to validate
-     * @param string $err   The optional custom exception message to throw on validation failure
+     * @param string $str The string to validate
+     * @param string|null $err The optional custom exception message to throw on validation failure
      */
-    public function __construct($str, $err = null)
+    public function __construct(string $str, string $err = null)
     {
         $this->str = $str;
         $this->err = $err;
@@ -78,7 +78,7 @@ class Validator
      *
      * @return void
      */
-    public static function addDefault()
+    public static function addDefault(): void
     {
         static::$methods['null'] = function ($str) {
             return $str === null || $str === '';
@@ -112,7 +112,7 @@ class Validator
             return ctype_alpha($str);
         };
         static::$methods['contains'] = function ($str, $needle) {
-            return strpos($str, $needle) !== false;
+            return str_contains($str, $needle);
         };
         static::$methods['regex'] = function ($str, $pattern) {
             return preg_match($pattern, $str);
@@ -127,11 +127,11 @@ class Validator
     /**
      * Add a custom validator to our list of validation methods
      *
-     * @param string $method        The name of the validator method
-     * @param callable $callback    The callback to perform on validation
+     * @param string $method The name of the validator method
+     * @param callable $callback The callback to perform on validation
      * @return void
      */
-    public static function addValidator($method, $callback)
+    public static function addValidator(string $method, callable $callback): void
     {
         static::$methods[strtolower($method)] = $callback;
     }
@@ -142,13 +142,13 @@ class Validator
      * Allows the ability to arbitrarily call a validator with an optional prefix
      * of "is" or "not" by simply calling an instance property like a callback
      *
-     * @param string $method            The callable method to execute
-     * @param array $args               The argument array to pass to our callback
-     * @throws BadMethodCallException   If an attempt was made to call a validator modifier that doesn't exist
-     * @throws ValidationException      If the validation check returns false
+     * @param string $method The callable method to execute
+     * @param array $args The argument array to pass to our callback
      * @return Validator|boolean
+     * @throws ValidationException      If the validation check returns false
+     * @throws BadMethodCallException   If an attempt was made to call a validator modifier that doesn't exist
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         $reverse = false;
         $validator = $method;
@@ -164,36 +164,26 @@ class Validator
         $validator = strtolower($validator);
 
         if (!$validator || !isset(static::$methods[$validator])) {
-            throw new BadMethodCallException('Unknown method '. $method .'()');
+            throw new BadMethodCallException('Unknown method ' . $method . '()');
         }
 
         $validator = static::$methods[$validator];
         array_unshift($args, $this->str);
 
-        switch (count($args)) {
-            case 1:
-                $result = $validator($args[0]);
-                break;
-            case 2:
-                $result = $validator($args[0], $args[1]);
-                break;
-            case 3:
-                $result = $validator($args[0], $args[1], $args[2]);
-                break;
-            case 4:
-                $result = $validator($args[0], $args[1], $args[2], $args[3]);
-                break;
-            default:
-                $result = call_user_func_array($validator, $args);
-                break;
-        }
+        $result = match (count($args)) {
+            1 => $validator($args[0]),
+            2 => $validator($args[0], $args[1]),
+            3 => $validator($args[0], $args[1], $args[2]),
+            4 => $validator($args[0], $args[1], $args[2], $args[3]),
+            default => call_user_func_array($validator, $args),
+        };
 
         $result = (bool)($result ^ $reverse);
 
         if (false === $this->err) {
             return $result;
         } elseif (false === $result) {
-            throw new ValidationException($this->err);
+            throw new ValidationException($this->err ?? '');
         }
 
         return $this;

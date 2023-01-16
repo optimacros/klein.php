@@ -11,6 +11,7 @@
 
 namespace Klein\Tests;
 
+use Closure;
 use Klein\Route;
 use Klein\RouteFactory;
 
@@ -31,7 +32,7 @@ class RouteFactoryTest extends AbstractKleinTest
      * Helpers
      */
 
-    protected function getTestCallable($message = self::TEST_CALLBACK_MESSAGE)
+    protected function getTestCallable($message = self::TEST_CALLBACK_MESSAGE): Closure
     {
         return function () use ($message) {
             return $message;
@@ -105,7 +106,7 @@ class RouteFactoryTest extends AbstractKleinTest
         $test_namespace = '/users';
         $test_path = '';
 
-        $this->testBuildBasic($test_namespace, $test_path, false, true);
+        $this->testBuildBasic($test_namespace, $test_path, false);
     }
 
     public function testBuildWithCustomRegexPath()

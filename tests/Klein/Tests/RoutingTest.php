@@ -17,6 +17,7 @@ use Klein\DataCollection\RouteCollection;
 use Klein\Exceptions\DispatchHaltedException;
 use Klein\Exceptions\HttpException;
 use Klein\Exceptions\RoutePathCompilationException;
+use Klein\Exceptions\UnhandledException;
 use Klein\Klein;
 use Klein\Request;
 use Klein\Response;
@@ -25,6 +26,7 @@ use Klein\ServiceProvider;
 use Klein\Tests\Mocks\HeadersEcho;
 use Klein\Tests\Mocks\HeadersSave;
 use Klein\Tests\Mocks\MockRequestFactory;
+use Throwable;
 
 /**
  * RoutingTest
@@ -32,6 +34,9 @@ use Klein\Tests\Mocks\MockRequestFactory;
 class RoutingTest extends AbstractKleinTest
 {
 
+    /**
+     * @throws Throwable
+     */
     public function testBasic()
     {
         $this->expectOutputString('x');
@@ -54,6 +59,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testCallable()
     {
         $this->expectOutputString('okok');
@@ -66,6 +74,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testCallbackArguments()
     {
         // Create expected objects
@@ -108,6 +119,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame($expected_objects['klein'], $this->klein_app);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testAppReference()
     {
         $this->expectOutputString('ab');
@@ -136,6 +150,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchOutput()
     {
         $expected_output = array(
@@ -168,6 +185,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchOutputNotSent()
     {
         $this->klein_app->respond(
@@ -186,6 +206,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchOutputCaptured()
     {
         $expected_output = array(
@@ -216,6 +239,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame($expected_output['returned'], $this->klein_app->response()->body());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchOutputReplaced()
     {
         $expected_output = array(
@@ -243,6 +269,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame($expected_output['echoed'], $this->klein_app->response()->body());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchOutputPrepended()
     {
         $expected_output = array(
@@ -279,6 +308,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchOutputAppended()
     {
         $expected_output = array(
@@ -315,6 +347,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchResponseReplaced()
     {
         $expected_body = 'You SHOULD see this';
@@ -357,6 +392,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testRespondReturn()
     {
         $return_one = $this->klein_app->respond(
@@ -392,6 +430,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame($return_one->getPath(), $return_two);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testCatchallImplicit()
     {
         $this->expectOutputString('b');
@@ -410,7 +451,6 @@ class RoutingTest extends AbstractKleinTest
         $this->klein_app->respond(
             '/two',
             function () {
-
             }
         );
         $this->klein_app->respond(
@@ -425,6 +465,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testCatchallAsterisk()
     {
         $this->expectOutputString('b');
@@ -444,7 +487,6 @@ class RoutingTest extends AbstractKleinTest
         $this->klein_app->respond(
             '/two',
             function () {
-
             }
         );
         $this->klein_app->respond(
@@ -459,6 +501,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testCatchallImplicitTriggers404()
     {
         $this->expectOutputString("b404\n");
@@ -482,6 +527,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testRegex()
     {
         $this->expectOutputString('zz');
@@ -511,6 +559,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testRegexNegate()
     {
         $this->expectOutputString("y");
@@ -527,6 +578,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testNormalNegate()
     {
         $this->expectOutputString('');
@@ -543,6 +597,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function test404()
     {
         $this->expectOutputString("404\n");
@@ -569,6 +626,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(404, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testParamsBasic()
     {
         $this->expectOutputString('blue');
@@ -585,6 +645,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testParamsIntegerSuccess()
     {
         $this->expectOutputString("string(3) \"987\"");
@@ -603,6 +666,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testParamsIntegerFail()
     {
         $this->expectOutputString('404 Code');
@@ -627,6 +693,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testParamsAlphaNum()
     {
         $this->klein_app->respond(
@@ -657,6 +726,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testParamsHex()
     {
         $this->klein_app->respond(
@@ -699,6 +771,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testParamsSlug()
     {
         $this->klein_app->respond(
@@ -753,6 +828,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testPathParamsAreUrlDecoded()
     {
         $this->klein_app->respond(
@@ -777,6 +855,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testPathParamsAreUrlDecodedToRFC3986Spec()
     {
         $this->klein_app->respond(
@@ -801,6 +882,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function test404TriggersOnce()
     {
         $this->expectOutputString('d404 Code');
@@ -824,6 +908,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function test404RouteDefinitionOrderDoesntEffectWhen404HandlersCalled()
     {
         $this->expectOutputString('onetwo404 Code');
@@ -856,6 +943,9 @@ class RoutingTest extends AbstractKleinTest
         error_reporting($old_error_val);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMethodCatchAll()
     {
         $this->expectOutputString('yup!123');
@@ -892,6 +982,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testLazyTrailingMatch()
     {
         $this->expectOutputString('this-is-a-title-123');
@@ -909,6 +1002,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testFormatMatch()
     {
         $this->expectOutputString('xml');
@@ -925,6 +1021,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDotSeparator()
     {
         $this->expectOutputString('matchA:slug=ABCD_E--matchB:slug=ABCD_E--');
@@ -966,6 +1065,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testControllerActionStyleRouteMatch()
     {
         $this->expectOutputString('donkey-kick');
@@ -983,6 +1085,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testRespondArgumentOrder()
     {
         $this->expectOutputString('abcdef');
@@ -1031,6 +1136,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testTrailingMatch()
     {
         $this->klein_app->respond(
@@ -1079,6 +1187,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testTrailingPossessiveMatch()
     {
         $this->klein_app->respond(
@@ -1118,6 +1229,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testNSDispatch()
     {
         $this->klein_app->with(
@@ -1175,6 +1289,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testNSDispatchExternal()
     {
         $ext_namespaces = $this->loadExternalRoutes();
@@ -1187,7 +1304,6 @@ class RoutingTest extends AbstractKleinTest
         );
 
         foreach ($ext_namespaces as $namespace) {
-
             $this->assertSame(
                 'yup',
                 $this->dispatchAndReturnOutput(
@@ -1204,6 +1320,9 @@ class RoutingTest extends AbstractKleinTest
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testNSDispatchExternalRerequired()
     {
         $ext_namespaces = $this->loadExternalRoutes();
@@ -1216,7 +1335,6 @@ class RoutingTest extends AbstractKleinTest
         );
 
         foreach ($ext_namespaces as $namespace) {
-
             $this->assertSame(
                 'yup',
                 $this->dispatchAndReturnOutput(
@@ -1233,6 +1351,9 @@ class RoutingTest extends AbstractKleinTest
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function test405DefaultRequest()
     {
         $this->klein_app->respond(
@@ -1251,6 +1372,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertEquals('GET, POST', $this->klein_app->response()->headers()->get('Allow'));
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testNo405OnNonMatchRoutes()
     {
         $this->klein_app->respond(
@@ -1268,6 +1392,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertEquals(404, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function test405Routes()
     {
         $result_array = array();
@@ -1316,6 +1443,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(405, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function test405ErrorHandler()
     {
         $result_array = array();
@@ -1357,6 +1487,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(405, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testOptionsDefaultRequest()
     {
         $this->klein_app->respond(
@@ -1380,12 +1513,15 @@ class RoutingTest extends AbstractKleinTest
         $this->assertEquals('GET, POST', $this->klein_app->response()->headers()->get('Allow'));
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testOptionsRoutes()
     {
         $access_control_headers = array(
             array(
                 'key' => 'Access-Control-Allow-Origin',
-                'val' => 'http://example.com',
+                'val' => 'https://example.com',
             ),
             array(
                 'key' => 'Access-Control-Allow-Methods',
@@ -1431,6 +1567,9 @@ class RoutingTest extends AbstractKleinTest
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testHeadDefaultRequest()
     {
         $expected_headers = array(
@@ -1481,6 +1620,9 @@ class RoutingTest extends AbstractKleinTest
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testHeadMethodMatch()
     {
         $test_strings = array(
@@ -1522,6 +1664,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testGetPathFor()
     {
         $this->klein_app->respond(
@@ -1655,6 +1800,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchHalt()
     {
         $this->expectOutputString('2,4,7,8,');
@@ -1717,6 +1865,9 @@ class RoutingTest extends AbstractKleinTest
         $this->klein_app->dispatch();
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchSkipCauses404()
     {
         $this->expectOutputString('404');
@@ -1750,6 +1901,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchAbort()
     {
         $this->expectOutputString('1,');
@@ -1776,6 +1930,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(404, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchAbortWithCode()
     {
         $this->expectOutputString('1,');
@@ -1802,6 +1959,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(404, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDispatchAbortCallsHttpError()
     {
         $test_code = 666;
@@ -1837,10 +1997,13 @@ class RoutingTest extends AbstractKleinTest
     }
 
     /**
-     * @expectedException Klein\Exceptions\UnhandledException
+     * @throws Throwable
      */
     public function testDispatchExceptionRethrowsUnknownCode()
     {
+        $this->expectException(Klein\Exceptions\UnhandledException::class);
+        $this->expectException(UnhandledException::class);
+
         $this->expectOutputString('');
 
         $test_message = 'whatever';
@@ -1857,6 +2020,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(404, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testThrowHttpExceptionHandledProperly()
     {
         $this->expectOutputString('');
@@ -1875,6 +2041,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(400, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testHttpExceptionStopsRouteMatching()
     {
         $this->expectOutputString('one');
@@ -1897,6 +2066,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testOptionsAlias()
     {
         $this->expectOutputString('1,2,');
@@ -1921,6 +2093,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testHeadAlias()
     {
         // HEAD requests shouldn't return data
@@ -1952,6 +2127,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertFalse($this->klein_app->response()->headers()->exists('Test-3'));
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testGetAlias()
     {
         $this->expectOutputString('1,2,');
@@ -1976,6 +2154,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testPostAlias()
     {
         $this->expectOutputString('1,2,');
@@ -2000,6 +2181,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testPutAlias()
     {
         $this->expectOutputString('1,2,');
@@ -2024,6 +2208,9 @@ class RoutingTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testDeleteAlias()
     {
         $this->expectOutputString('1,2,');
@@ -2055,6 +2242,7 @@ class RoutingTest extends AbstractKleinTest
      * As the original Klein project was designed as a PHP version of Sinatra,
      * many of the following tests are ports of the Sinatra ruby equivalents:
      * https://github.com/sinatra/sinatra/blob/cd82a57154d57c18acfadbfefbefc6ea6a5035af/test/routing_test.rb
+     * @throws Throwable
      */
 
     public function testMatchesEncodedSlashes()
@@ -2077,6 +2265,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame('foo/bar', $this->klein_app->response()->body());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMatchesDotAsNamedParam()
     {
         $this->klein_app->respond(
@@ -2097,6 +2288,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame('user@example.com', $this->klein_app->response()->body());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMatchesDotOutsideOfNamedParam()
     {
         $file = null;
@@ -2125,6 +2319,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame('png', $ext);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMatchesLiteralDotsInPaths()
     {
         $this->klein_app->respond(
@@ -2146,6 +2343,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(404, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMatchesLiteralDotsInPathBeforeNamedParam()
     {
         $this->klein_app->respond(
@@ -2167,6 +2367,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(404, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMultipleUnsafeCharactersArentOverQuoted()
     {
         $this->klein_app->respond(
@@ -2181,6 +2384,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(200, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMatchesLiteralPlusSignsInPaths()
     {
         $this->klein_app->respond(
@@ -2202,6 +2408,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(404, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMatchesParenthesesInPaths()
     {
         $this->klein_app->respond(
@@ -2216,6 +2425,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(200, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testMatchesAdvancedRegularExpressions()
     {
         $this->klein_app->respond(
@@ -2230,6 +2442,9 @@ class RoutingTest extends AbstractKleinTest
         $this->assertSame(200, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testApcDependencyFailsGracefully()
     {
         // Custom apc function
@@ -2262,7 +2477,7 @@ class RoutingTest extends AbstractKleinTest
             $this->klein_app->dispatch(
                 MockRequestFactory::create('/users/1738197/friends/7828316')
             );
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $exception = $e->getPrevious();
         }
 

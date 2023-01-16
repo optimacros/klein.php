@@ -31,42 +31,42 @@ class ServiceProvider
      *
      * @type Request
      */
-    protected $request;
+    protected Request $request;
 
     /**
      * The Response instance containing HTTP response data and behaviors
      *
      * @type AbstractResponse
      */
-    protected $response;
+    protected AbstractResponse $response;
 
     /**
      * The id of the current PHP session
      *
      * @type string|boolean
      */
-    protected $session_id;
+    protected string|bool $session_id;
 
     /**
      * The view layout
      *
-     * @type string
+     * @type ?string
      */
-    protected $layout;
+    protected ?string $layout;
 
     /**
      * The view to render
      *
      * @type string
      */
-    protected $view;
+    protected string $view;
 
     /**
      * Shared data collection
      *
      * @type DataCollection
      */
-    protected $shared_data;
+    protected DataCollection $shared_data;
 
 
     /**
@@ -76,8 +76,8 @@ class ServiceProvider
     /**
      * Constructor
      *
-     * @param Request $request              Object containing all HTTP request data and behaviors
-     * @param AbstractResponse $response    Object containing all HTTP response data and behaviors
+     * @param Request|null $request Object containing all HTTP request data and behaviors
+     * @param AbstractResponse|null $response Object containing all HTTP response data and behaviors
      */
     public function __construct(Request $request = null, AbstractResponse $response = null)
     {
@@ -91,14 +91,14 @@ class ServiceProvider
     /**
      * Bind object instances to this service
      *
-     * @param Request $request              Object containing all HTTP request data and behaviors
-     * @param AbstractResponse $response    Object containing all HTTP response data and behaviors
+     * @param Request|null $request Object containing all HTTP request data and behaviors
+     * @param AbstractResponse|null $response Object containing all HTTP response data and behaviors
      * @return ServiceProvider
      */
-    public function bind(Request $request = null, AbstractResponse $response = null)
+    public function bind(Request $request = null, AbstractResponse $response = null): static
     {
         // Keep references
-        $this->request  = $request  ?: $this->request;
+        $this->request = $request ?: $this->request;
         $this->response = $response ?: $this->response;
 
         return $this;
@@ -107,9 +107,9 @@ class ServiceProvider
     /**
      * Returns the shared data collection object
      *
-     * @return \Klein\DataCollection\DataCollection
+     * @return DataCollection
      */
-    public function sharedData()
+    public function sharedData(): DataCollection
     {
         return $this->shared_data;
     }
@@ -121,7 +121,7 @@ class ServiceProvider
      *
      * @return string|false
      */
-    public function startSession()
+    public function startSession(): bool|string
     {
         if (session_id() === '') {
             // Attempt to start a session
@@ -136,12 +136,12 @@ class ServiceProvider
     /**
      * Stores a flash message of $type
      *
-     * @param string $msg       The message to flash
-     * @param string $type      The flash message type
-     * @param array $params     Optional params to be parsed by markdown
+     * @param string $msg The message to flash
+     * @param string|array $type The flash message type
+     * @param array|null $params Optional params to be parsed by markdown
      * @return void
      */
-    public function flash($msg, $type = 'info', $params = null)
+    public function flash(string $msg, string|array $type = 'info', array $params = null): void
     {
         $this->startSession();
         if (is_array($type)) {
@@ -159,10 +159,10 @@ class ServiceProvider
     /**
      * Returns and clears all flashes of optional $type
      *
-     * @param string $type  The name of the flash message type
+     * @param string|null $type The name of the flash message type
      * @return array
      */
-    public function flashes($type = null)
+    public function flashes(string $type = null): array
     {
         $this->startSession();
 
@@ -187,22 +187,22 @@ class ServiceProvider
     /**
      * Render a text string as markdown
      *
-     * Supports basic markdown syntax
+     * Supports basic Markdown syntax
      *
      * Also, this method takes in EITHER an array of optional arguments (as the second parameter)
      * ... OR this method will simply take a variable number of arguments (after the initial str arg)
      *
-     * @param string $str   The text string to parse
-     * @param array $args   Optional arguments to be parsed by markdown
+     * @param string $str The text string to parse
+     * @param array|string|null $args Optional arguments to be parsed by markdown
      * @return string
      */
-    public static function markdown($str, $args = null)
+    public static function markdown(string $str, array|string|null $args = null): string
     {
         // Create our markdown parse/conversion regex's
         $md = array(
             '/\[([^\]]++)\]\(([^\)]++)\)/' => '<a href="$2">$1</a>',
-            '/\*\*([^\*]++)\*\*/'          => '<strong>$1</strong>',
-            '/\*([^\*]++)\*/'              => '<em>$1</em>'
+            '/\*\*([^\*]++)\*\*/' => '<strong>$1</strong>',
+            '/\*([^\*]++)\*/' => '<em>$1</em>'
         );
 
         // Let's make our arguments more "magical"
@@ -218,7 +218,7 @@ class ServiceProvider
 
         // Encode our args so we can insert them into an HTML string
         foreach ($args as &$arg) {
-            $arg = htmlentities($arg, ENT_QUOTES, 'UTF-8');
+            $arg = htmlentities($arg ?? '', ENT_QUOTES, 'UTF-8');
         }
 
         // Actually do our markdown conversion
@@ -232,11 +232,11 @@ class ServiceProvider
      * to be shown in a UTF-8 HTML environment. Its options
      * are otherwise limited by design
      *
-     * @param string $str   The string to escape
-     * @param int $flags    A bitmask of `htmlentities()` compatible flags
+     * @param string $str The string to escape
+     * @param int $flags A bitmask of `htmlentities()` compatible flags
      * @return string
      */
-    public static function escape($str, $flags = ENT_QUOTES)
+    public static function escape(string $str, int $flags = ENT_QUOTES): string
     {
         return htmlentities($str, $flags, 'UTF-8');
     }
@@ -246,7 +246,7 @@ class ServiceProvider
      *
      * @return ServiceProvider
      */
-    public function refresh()
+    public function refresh(): static
     {
         $this->response->redirect(
             $this->request->uri()
@@ -260,7 +260,7 @@ class ServiceProvider
      *
      * @return ServiceProvider
      */
-    public function back()
+    public function back(): static
     {
         $referer = $this->request->server()->get('HTTP_REFERER');
 
@@ -279,10 +279,10 @@ class ServiceProvider
      * Simply calling this method without any arguments returns the current layout.
      * Calling with an argument, however, sets the layout to what was provided by the argument.
      *
-     * @param string $layout    The layout of the view
+     * @param string|null $layout The layout of the view
      * @return string|ServiceProvider
      */
-    public function layout($layout = null)
+    public function layout(string $layout = null): string|static
     {
         if (null !== $layout) {
             $this->layout = $layout;
@@ -298,7 +298,7 @@ class ServiceProvider
      *
      * @return void
      */
-    public function yieldView()
+    public function yieldView(): void
     {
         require $this->view;
     }
@@ -306,11 +306,11 @@ class ServiceProvider
     /**
      * Renders a view + optional layout
      *
-     * @param string $view  The view to render
-     * @param array $data   The data to render in the view
+     * @param string $view The view to render
+     * @param array $data The data to render in the view
      * @return void
      */
-    public function render($view, array $data = array())
+    public function render(string $view, array $data = array()): void
     {
         $original_view = $this->view;
 
@@ -337,11 +337,11 @@ class ServiceProvider
     /**
      * Renders a view without a layout
      *
-     * @param string $view  The view to render
-     * @param array $data   The data to render in the view
+     * @param string $view The view to render
+     * @param array $data The data to render in the view
      * @return void
      */
-    public function partial($view, array $data = array())
+    public function partial(string $view, array $data = array()): void
     {
         $layout = $this->layout;
         $this->layout = null;
@@ -352,11 +352,11 @@ class ServiceProvider
     /**
      * Add a custom validator for our validation method
      *
-     * @param string $method        The name of the validator method
-     * @param callable $callback    The callback to perform on validation
+     * @param string $method The name of the validator method
+     * @param callable $callback The callback to perform on validation
      * @return void
      */
-    public function addValidator($method, $callback)
+    public function addValidator(string $method, callable $callback): void
     {
         Validator::addValidator($method, $callback);
     }
@@ -364,11 +364,11 @@ class ServiceProvider
     /**
      * Start a validator chain for the specified string
      *
-     * @param string $string    The string to validate
-     * @param string $err       The custom exception message to throw
+     * @param string $string The string to validate
+     * @param string|null $err The custom exception message to throw
      * @return Validator
      */
-    public function validate($string, $err = null)
+    public function validate(string $string, string $err = null): Validator
     {
         return new Validator($string, $err);
     }
@@ -376,13 +376,33 @@ class ServiceProvider
     /**
      * Start a validator chain for the specified parameter
      *
-     * @param string $param     The name of the parameter to validate
-     * @param string $err       The custom exception message to throw
+     * @param string $param The name of the parameter to validate
+     * @param string|null $err The custom exception message to throw
      * @return Validator
      */
-    public function validateParam($param, $err = null)
+    public function validateParam(string $param, string $err = null): Validator
     {
         return $this->validate($this->request->param($param), $err);
+    }
+
+    /**
+     * Returns the request object
+     *
+     * @return Request|null
+     */
+    public function getRequest(): ?Request
+    {
+        return $this->request;
+    }
+
+    /**
+     * Returns the response object
+     *
+     * @return Response|null
+     */
+    public function getResponse(): ?Response
+    {
+        return $this->response;
     }
 
 
@@ -392,10 +412,10 @@ class ServiceProvider
      * Allows the ability to arbitrarily check the existence of shared data
      * from this instance while treating it as an instance property
      *
-     * @param string $key     The name of the shared data
+     * @param string $key The name of the shared data
      * @return boolean
      */
-    public function __isset($key)
+    public function __isset(string $key)
     {
         return $this->shared_data->exists($key);
     }
@@ -406,10 +426,10 @@ class ServiceProvider
      * Allows the ability to arbitrarily request shared data from this instance
      * while treating it as an instance property
      *
-     * @param string $key     The name of the shared data
+     * @param string $key The name of the shared data
      * @return string
      */
-    public function __get($key)
+    public function __get(string $key)
     {
         return $this->shared_data->get($key);
     }
@@ -420,11 +440,11 @@ class ServiceProvider
      * Allows the ability to arbitrarily set shared data from this instance
      * while treating it as an instance property
      *
-     * @param string $key     The name of the shared data
-     * @param mixed $value      The value of the shared data
+     * @param string $key The name of the shared data
+     * @param mixed $value The value of the shared data
      * @return void
      */
-    public function __set($key, $value)
+    public function __set(string $key, mixed $value)
     {
         $this->shared_data->set($key, $value);
     }
@@ -435,10 +455,10 @@ class ServiceProvider
      * Allows the ability to arbitrarily remove shared data from this instance
      * while treating it as an instance property
      *
-     * @param string $key     The name of the shared data
+     * @param string $key The name of the shared data
      * @return void
      */
-    public function __unset($key)
+    public function __unset(string $key)
     {
         $this->shared_data->remove($key);
     }

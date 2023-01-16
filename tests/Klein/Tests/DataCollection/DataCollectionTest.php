@@ -22,11 +22,11 @@ class DataCollectionTest extends AbstractKleinTest
 {
 
     /**
-     * Non existent key in the sample data
+     * Non-existent key in the sample data
      *
      * @type string
      */
-    protected static $nonexistent_key = 'key-name-doesnt-exist';
+    protected static string $nonexistent_key = 'key-name-doesnt-exist';
 
 
     /*
@@ -40,7 +40,7 @@ class DataCollectionTest extends AbstractKleinTest
      * @param array $sample_data
      * @return void
      */
-    protected function prepareSampleData(&$sample_data)
+    protected function prepareSampleData(array &$sample_data): void
     {
         if (isset($sample_data[static::$nonexistent_key])) {
             unset($sample_data[static::$nonexistent_key]);
@@ -59,7 +59,7 @@ class DataCollectionTest extends AbstractKleinTest
      *
      * @return array
      */
-    public function sampleDataProvider()
+    public function sampleDataProvider(): array
     {
         // Populate our sample data
         $sample_data = array(
@@ -86,7 +86,7 @@ class DataCollectionTest extends AbstractKleinTest
      *
      * @return array
      */
-    public function totallyDifferentSampleDataProvider()
+    public function totallyDifferentSampleDataProvider(): array
     {
         // Populate our sample data
         $totally_different_sample_data = array(

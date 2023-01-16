@@ -11,7 +11,11 @@
 
 namespace Klein\Tests;
 
+use BadMethodCallException;
+use Closure;
 use Klein\App;
+use Klein\Exceptions\DuplicateServiceException;
+use Klein\Exceptions\UnknownServiceException;
 
 /**
  * AppTest
@@ -30,7 +34,7 @@ class AppTest extends AbstractKleinTest
      * Helpers
      */
 
-    protected function getTestCallable($message = self::TEST_CALLBACK_MESSAGE)
+    protected function getTestCallable($message = self::TEST_CALLBACK_MESSAGE): Closure
     {
         return function () use ($message) {
             return $message;
@@ -42,13 +46,18 @@ class AppTest extends AbstractKleinTest
      * Tests
      */
 
-    public function testRegisterFiller()
+    public function testRegisterFiller(): array
     {
         $func_name = 'yay_func';
 
         $app = new App();
 
         $app->register($func_name, $this->getTestCallable());
+
+        $returned = $app->{$func_name}();
+
+        $this->assertNotNull($returned);
+        $this->assertSame(self::TEST_CALLBACK_MESSAGE, $returned);
 
         return array(
             'app' => $app,
@@ -70,11 +79,10 @@ class AppTest extends AbstractKleinTest
         $this->assertSame(self::TEST_CALLBACK_MESSAGE, $returned);
     }
 
-    /**
-     * @expectedException Klein\Exceptions\UnknownServiceException
-     */
     public function testGetBadMethod()
     {
+        $this->expectException(UnknownServiceException::class);
+
         $app = new App();
         $app->random_thing_that_doesnt_exist;
     }
@@ -93,21 +101,20 @@ class AppTest extends AbstractKleinTest
         $this->assertSame(self::TEST_CALLBACK_MESSAGE, $returned);
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     */
     public function testCallBadMethod()
     {
+        $this->expectException(BadMethodCallException::class);
         $app = new App();
         $app->random_thing_that_doesnt_exist();
     }
 
     /**
      * @depends testRegisterFiller
-     * @expectedException Klein\Exceptions\DuplicateServiceException
      */
     public function testRegisterDuplicateMethod(array $args)
     {
+        $this->expectException(DuplicateServiceException::class);
+
         // Get our vars from our args
         extract($args);
 

@@ -12,6 +12,7 @@
 namespace Klein\Tests;
 
 use Klein\DataCollection\DataCollection;
+use \Klein\Exceptions\ValidationException;
 use Klein\Klein;
 use Klein\Request;
 use Klein\Response;
@@ -24,7 +25,7 @@ use Klein\Validator;
 class ServiceProviderTest extends AbstractKleinTest
 {
 
-    protected function getBasicServiceProvider()
+    protected function getBasicServiceProvider(): ServiceProvider
     {
         return new ServiceProvider(
             $request = new Request(),
@@ -37,8 +38,8 @@ class ServiceProviderTest extends AbstractKleinTest
         $service = new ServiceProvider();
 
         // Make sure our attributes are first null
-        $this->assertAttributeEquals(null, 'request', $service);
-        $this->assertAttributeEquals(null, 'response', $service);
+        $this->assertEquals(null, $service->getRequest());
+        $this->assertEquals(null, $service->getResponse());
 
         // New service with injected dependencies
         $service = new ServiceProvider(
@@ -47,8 +48,8 @@ class ServiceProviderTest extends AbstractKleinTest
         );
 
         // Make sure our attributes are set
-        $this->assertAttributeEquals($request, 'request', $service);
-        $this->assertAttributeEquals($response, 'response', $service);
+        $this->assertEquals($request, $service->getRequest());
+        $this->assertEquals($response, $service->getResponse());
     }
 
     public function testBinder()
@@ -56,8 +57,8 @@ class ServiceProviderTest extends AbstractKleinTest
         $service = new ServiceProvider();
 
         // Make sure our attributes are first null
-        $this->assertAttributeEquals(null, 'request', $service);
-        $this->assertAttributeEquals(null, 'response', $service);
+        $this->assertEquals(null, $service->getRequest());
+        $this->assertEquals(null, $service->getResponse());
 
         // New service with injected dependencies
         $return_val = $service->bind(
@@ -66,8 +67,8 @@ class ServiceProviderTest extends AbstractKleinTest
         );
 
         // Make sure our attributes are set
-        $this->assertAttributeEquals($request, 'request', $service);
-        $this->assertAttributeEquals($response, 'response', $service);
+        $this->assertEquals($request, $service->getRequest());
+        $this->assertEquals($response, $service->getResponse());
 
         // Make sure we're chainable
         $this->assertEquals($service, $return_val);
@@ -78,7 +79,7 @@ class ServiceProviderTest extends AbstractKleinTest
     {
         $service = new ServiceProvider();
 
-        $this->assertInternalType('object', $service->sharedData());
+        $this->assertIsObject($service->sharedData());
         $this->assertTrue($service->sharedData() instanceof DataCollection);
     }
 
@@ -107,7 +108,7 @@ class ServiceProviderTest extends AbstractKleinTest
 
         $returned = $service->startSession();
 
-        $this->assertFalse($returned);
+        $this->assertNull($returned);
 
         // Clean up
         session_destroy();
@@ -260,6 +261,9 @@ class ServiceProviderTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRefresh()
     {
         $this->klein_app->respond(
@@ -281,9 +285,12 @@ class ServiceProviderTest extends AbstractKleinTest
         $this->assertLessThan(400, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testBack()
     {
-        $url = 'http://google.com/';
+        $url = 'https://google.com/';
 
         $request = new Request();
         $request->server()->set('HTTP_REFERER', $url);
@@ -307,6 +314,9 @@ class ServiceProviderTest extends AbstractKleinTest
         $this->assertLessThan(400, $this->klein_app->response()->code());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testBackWithoutRefererSet()
     {
         $request = new Request();
@@ -341,6 +351,7 @@ class ServiceProviderTest extends AbstractKleinTest
 
     /**
      * NOTE: Also tests "yield()"
+     * @throws \Throwable
      */
     public function testRender()
     {
@@ -376,6 +387,9 @@ class ServiceProviderTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderChunked()
     {
         $test_data = array(
@@ -413,6 +427,9 @@ class ServiceProviderTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testPartial()
     {
         $test_data = array(
@@ -461,11 +478,10 @@ class ServiceProviderTest extends AbstractKleinTest
         $this->assertContains($test_callback, Validator::$methods);
     }
 
-    /**
-     * @expectedException \Klein\Exceptions\ValidationException
-     */
     public function testValidate()
     {
+        $this->expectException(ValidationException::class);
+
         $this->klein_app->onError(
             function ($a, $b, $c, $exception) {
                 throw $exception;
@@ -482,10 +498,12 @@ class ServiceProviderTest extends AbstractKleinTest
     }
 
     /**
-     * @expectedException \Klein\Exceptions\ValidationException
+     * @throws \Throwable
      */
     public function testValidateParam()
     {
+        $this->expectException(ValidationException::class);
+
         $this->klein_app->onError(
             function ($a, $b, $c, $exception) {
                 throw $exception;
@@ -504,7 +522,7 @@ class ServiceProviderTest extends AbstractKleinTest
         $this->klein_app->dispatch();
     }
 
-    // Test ALL of the magic setter, getter, exists, and removal methods
+    // Test ALL the magic setter, getter, exists, and removal methods
     public function testMagicGetSetExistsRemove()
     {
         $test_data = array(

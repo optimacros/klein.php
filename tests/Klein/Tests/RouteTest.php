@@ -11,6 +11,7 @@
 
 namespace Klein\Tests;
 
+use Closure;
 use InvalidArgumentException;
 use Klein\Klein;
 use Klein\Route;
@@ -21,7 +22,7 @@ use Klein\Route;
 class RouteTest extends AbstractKleinTest
 {
 
-    protected function getTestCallable()
+    protected function getTestCallable(): Closure
     {
         return function () {
             echo 'dog';
@@ -162,11 +163,9 @@ class RouteTest extends AbstractKleinTest
      * Exception tests
      */
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testCallbackSetWithIncorrectType()
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->expectException(\InvalidArgumentException::class);
 
         $route = new Route($this->getTestCallable());
@@ -175,11 +174,9 @@ class RouteTest extends AbstractKleinTest
         $route->setCallback(100);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testMethodSetWithIncorrectType()
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->expectException(\InvalidArgumentException::class);
 
         $route = new Route($this->getTestCallable());

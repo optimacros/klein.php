@@ -47,7 +47,7 @@ class Route
      *
      * @type string
      */
-    protected $path;
+    protected string $path;
 
     /**
      * The HTTP method to match
@@ -60,14 +60,14 @@ class Route
      *
      * @type string|array
      */
-    protected $method;
+    protected string|array $method;
 
     /**
-     * Whether or not to count this route as a match when counting total matches
+     * Whether to count this route as a match when counting total matches
      *
      * @type boolean
      */
-    protected $count_match;
+    protected bool $count_match;
 
     /**
      * The name of the route
@@ -76,7 +76,7 @@ class Route
      *
      * @type string
      */
-    protected $name;
+    protected string $name;
 
 
     /**
@@ -87,11 +87,12 @@ class Route
      * Constructor
      *
      * @param callable $callback
-     * @param string $path
-     * @param string|array $method
-     * @param boolean $count_match
+     * @param string|null $path
+     * @param $method
+     * @param bool $count_match
+     * @param $name
      */
-    public function __construct($callback, $path = null, $method = null, $count_match = true, $name = null)
+    public function __construct(callable $callback, string $path = null, $method = null, bool $count_match = true, $name = null)
     {
         // Initialize some properties (use our setters so we can validate param types)
         $this->setCallback($callback);
@@ -106,7 +107,7 @@ class Route
      *
      * @return callable
      */
-    public function getCallback()
+    public function getCallback(): callable
     {
         return $this->callback;
     }
@@ -115,13 +116,13 @@ class Route
      * Set the callback
      *
      * @param callable $callback
-     * @throws InvalidArgumentException If the callback isn't a callable
      * @return Route
+     *@throws InvalidArgumentException If the callback isn't a callable
      */
-    public function setCallback($callback)
+    public function setCallback(callable $callback): static
     {
         if (!is_callable($callback)) {
-            throw new InvalidArgumentException('Expected a callable. Got an uncallable '. gettype($callback));
+            throw new InvalidArgumentException('Expected a callable. Got an un-callable '. gettype($callback));
         }
 
         $this->callback = $callback;
@@ -134,7 +135,7 @@ class Route
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -145,9 +146,9 @@ class Route
      * @param string $path
      * @return Route
      */
-    public function setPath($path)
+    public function setPath(string $path): static
     {
-        $this->path = (string) $path;
+        $this->path = $path;
 
         return $this;
     }
@@ -157,7 +158,7 @@ class Route
      *
      * @return string|array
      */
-    public function getMethod()
+    public function getMethod(): array|string
     {
         return $this->method;
     }
@@ -165,11 +166,11 @@ class Route
     /**
      * Set the method
      *
-     * @param string|array|null $method
-     * @throws InvalidArgumentException If a non-string or non-array type is passed
+     * @param array|string|null $method
      * @return Route
+     *@throws InvalidArgumentException If a non-string or non-array type is passed
      */
-    public function setMethod($method)
+    public function setMethod(array|string|null $method): static
     {
         // Allow null, otherwise expect an array or a string
         if (null !== $method && !is_array($method) && !is_string($method)) {
@@ -186,7 +187,7 @@ class Route
      *
      * @return boolean
      */
-    public function getCountMatch()
+    public function getCountMatch(): bool
     {
         return $this->count_match;
     }
@@ -197,9 +198,9 @@ class Route
      * @param boolean $count_match
      * @return Route
      */
-    public function setCountMatch($count_match)
+    public function setCountMatch(bool $count_match): static
     {
-        $this->count_match = (boolean) $count_match;
+        $this->count_match = $count_match;
 
         return $this;
     }
@@ -209,7 +210,7 @@ class Route
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -217,16 +218,12 @@ class Route
     /**
      * Set the name
      *
-     * @param string $name
+     * @param ?string $name
      * @return Route
      */
-    public function setName($name)
+    public function setName(?string $name): static
     {
-        if (null !== $name) {
-            $this->name = (string) $name;
-        } else {
-            $this->name = $name;
-        }
+        $this->name = $name;
 
         return $this;
     }
@@ -237,10 +234,10 @@ class Route
      *
      * Allows the ability to arbitrarily call this instance like a function
      *
-     * @param mixed $args Generic arguments, magically accepted
+     * @param mixed|null $args Generic arguments, magically accepted
      * @return mixed
      */
-    public function __invoke($args = null)
+    public function __invoke(mixed $args = null): mixed
     {
         $args = func_get_args();
 

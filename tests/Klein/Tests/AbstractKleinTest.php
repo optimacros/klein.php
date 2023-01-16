@@ -14,8 +14,8 @@ namespace Klein\Tests;
 use Klein\Klein;
 use Klein\Request;
 use Klein\Response;
-use Klein\Tests\Mocks\HeadersNoOp;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 /**
  * AbstractKleinTest
@@ -31,11 +31,11 @@ abstract class AbstractKleinTest extends TestCase
      *
      * @type Klein
      */
-    protected $klein_app;
+    protected Klein $klein_app;
 
 
     /**
-     * Setup our test
+     * Set up our test
      * (runs before each test)
      *
      * @return void
@@ -53,11 +53,12 @@ abstract class AbstractKleinTest extends TestCase
      * This is mostly useful, since the tests would otherwise have to make a bunch of calls
      * concerning the argument order and constants. DRY, bitch. ;)
      *
-     * @param Request $request      Custom Klein "Request" object
-     * @param Response $response    Custom Klein "Response" object
-     * @return mixed The output of the dispatch call
+     * @param Request|null $request Custom Klein "Request" object
+     * @param Response|null $response Custom Klein "Response" object
+     * @return string|null The output of the dispatch call
+     * @throws Throwable
      */
-    protected function dispatchAndReturnOutput($request = null, $response = null)
+    protected function dispatchAndReturnOutput(Request $request = null, Response $response = null): ?string
     {
         return $this->klein_app->dispatch(
             $request,
@@ -76,7 +77,7 @@ abstract class AbstractKleinTest extends TestCase
      * @param string $message (optional) A message to display if the assertion fails
      * @return void
      */
-    protected function assertOutputSame($expected, $callback, $message = '')
+    protected function assertOutputSame(mixed $expected, callable $callback, string $message = ''): void
     {
         // Start our output buffer so we can capture our output
         ob_start();
@@ -89,17 +90,17 @@ abstract class AbstractKleinTest extends TestCase
         // Clean our buffer and destroy it, so its like no output ever happened. ;)
         ob_end_clean();
 
-        // Use PHPUnit's built in assertion
+        // Use PHPUnit's built-in assertion
         $this->assertSame($expected, $out, $message);
     }
 
     /**
      * Loads externally defined routes under the filename's namespace
      *
-     * @param Klein $app_context The application context to attach the routes to
+     * @param Klein|null $app_context The application context to attach the routes to
      * @return array
      */
-    protected function loadExternalRoutes(Klein $app_context = null)
+    protected function loadExternalRoutes(Klein $app_context = null): array
     {
         // Did we not pass an instance?
         if (is_null($app_context)) {

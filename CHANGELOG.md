@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.2.0
+
+## Features
+
+- Breaking changes, project only for PHP ^8.1  
+
 
 ## 2.1.2
 

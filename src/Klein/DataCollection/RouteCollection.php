@@ -33,6 +33,7 @@ class RouteCollection extends DataCollection
      */
     public function __construct(array $routes = array())
     {
+        parent::__construct($routes);
         foreach ($routes as $value) {
             $this->add($value);
         }
@@ -51,12 +52,12 @@ class RouteCollection extends DataCollection
      * by passing the name of the route as the "$key" and an
      * instance of a Route as the "$value"
      *
-     * @see DataCollection::set()
-     * @param string $key                   The name of the route to set
-     * @param Route|callable $value         The value of the route to set
+     * @param string $key The name of the route to set
+     * @param mixed $value The value of the route to set
      * @return RouteCollection
+     * @see DataCollection::set()
      */
-    public function set($key, $value)
+    public function set(string $key, mixed $value): DataCollection
     {
         if (!$value instanceof Route) {
             $value = new Route($value);
@@ -71,9 +72,9 @@ class RouteCollection extends DataCollection
      * This will auto-generate a name
      *
      * @param Route $route
-     * @return RouteCollection
+     * @return RouteCollection|DataCollection
      */
-    public function addRoute(Route $route)
+    public function addRoute(Route $route): RouteCollection|DataCollection
     {
         /**
          * Auto-generate a name from the object's hash
@@ -92,10 +93,10 @@ class RouteCollection extends DataCollection
      * will take a Route instance, string callable
      * or any other Route class compatible callback
      *
-     * @param Route|callable $route
-     * @return RouteCollection
+     * @param callable|Route $route
+     * @return RouteCollection|DataCollection
      */
-    public function add($route)
+    public function add(callable|Route $route): RouteCollection|DataCollection
     {
         if (!$route instanceof Route) {
             $route = new Route($route);
@@ -116,12 +117,12 @@ class RouteCollection extends DataCollection
      *
      * @return RouteCollection
      */
-    public function prepareNamed()
+    public function prepareNamed(): static
     {
         // Create a new collection so we can keep our order
         $prepared = new static();
 
-        foreach ($this as $key => $route) {
+        foreach ($this as $route) {
             $route_name = $route->getName();
 
             if (null !== $route_name) {

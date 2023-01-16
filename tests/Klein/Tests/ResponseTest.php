@@ -16,15 +16,15 @@ use Klein\DataCollection\ResponseCookieDataCollection;
 use Klein\Exceptions\LockedResponseException;
 use Klein\Exceptions\ResponseAlreadySentException;
 use Klein\HttpStatus;
-use Klein\Klein;
 use Klein\Response;
 use Klein\ResponseCookie;
-use Klein\Tests\Mocks\MockRequestFactory;
+use RuntimeException;
+use Throwable;
 
 /**
  * ResponsesTest
  */
-class ResponsesTest extends AbstractKleinTest
+class ResponseTest extends AbstractKleinTest
 {
 
     public function testProtocolVersionGetSet()
@@ -152,27 +152,27 @@ class ResponsesTest extends AbstractKleinTest
         // Attempt to modify
         try {
             $response->protocolVersion('2.0');
-        } catch (LockedResponseException $e) {
+        } catch (LockedResponseException) {
         }
 
         try {
             $response->body('WOOT!');
-        } catch (LockedResponseException $e) {
+        } catch (LockedResponseException) {
         }
 
         try {
             $response->code(204);
-        } catch (LockedResponseException $e) {
+        } catch (LockedResponseException) {
         }
 
         try {
             $response->prepend('cat');
-        } catch (LockedResponseException $e) {
+        } catch (LockedResponseException) {
         }
 
         try {
             $response->append('dog');
-        } catch (LockedResponseException $e) {
+        } catch (LockedResponseException) {
         }
 
 
@@ -249,11 +249,9 @@ class ResponsesTest extends AbstractKleinTest
         $this->assertTrue($response->isLocked());
     }
 
-    /**
-     * @expectedException \Klein\Exceptions\ResponseAlreadySentException
-     */
     public function testSendWhenAlreadySent()
     {
+        $this->expectException(ResponseAlreadySentException::class);
         $this->expectException(ResponseAlreadySentException::class);
 
         $response = new Response();
@@ -310,7 +308,7 @@ class ResponsesTest extends AbstractKleinTest
     {
         $headers = array(
             'test' => 'woot!',
-            'test' => 'sure',
+            'test1' => 'sure',
             'okay' => 'yup',
         );
 
@@ -402,7 +400,7 @@ class ResponsesTest extends AbstractKleinTest
 
     public function testRedirect()
     {
-        $url = 'http://google.com/';
+        $url = 'https://google.com/';
         $code = 302;
 
         $response = new Response();
@@ -436,6 +434,9 @@ class ResponsesTest extends AbstractKleinTest
         $this->assertNotEquals('<pre></pre>', $response->body());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testFileSend()
     {
         $file_name = 'testing';
@@ -469,6 +470,9 @@ class ResponsesTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testFileSendLooseArgs()
     {
         $this->klein_app->respond(
@@ -497,9 +501,6 @@ class ResponsesTest extends AbstractKleinTest
         );
     }
 
-    /**
-     * @expectedException \Klein\Exceptions\ResponseAlreadySentException
-     */
     public function testFileSendWhenAlreadySent()
     {
         $this->expectException(ResponseAlreadySentException::class);
@@ -517,12 +518,9 @@ class ResponsesTest extends AbstractKleinTest
         $response->file(__FILE__);
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testFileSendWithNonExistentFile()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         // Ignore the file warning
         $old_error_val = error_reporting();
@@ -595,6 +593,9 @@ class ResponsesTest extends AbstractKleinTest
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testJSONWithPrefix()
     {
         // Create a test object to be JSON encoded/decoded

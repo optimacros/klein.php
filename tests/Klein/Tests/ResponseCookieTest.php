@@ -28,7 +28,7 @@ class ResponseCookieTest extends AbstractKleinTest
      *
      * @return array
      */
-    public function sampleDataProvider()
+    public function sampleDataProvider(): array
     {
         // Populate our sample data
         $default_sample_data = array(
@@ -200,7 +200,7 @@ class ResponseCookieTest extends AbstractKleinTest
             null,
             null,
             null,
-            null,
+            (bool)null,
             $sample_data['http_only']
         );
 

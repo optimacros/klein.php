@@ -136,7 +136,7 @@ class RequestTest extends AbstractKleinTest
         // Test Setter
         $this->assertSame($request->test = '#yup', $request->param('test'));
 
-        // Test Unsetter
+        // Test Un-setter
         unset($request->test);
         $this->assertNull($request->param('test'));
     }
@@ -247,6 +247,9 @@ class RequestTest extends AbstractKleinTest
         $this->assertTrue($request->method(strtolower($weird_override_method)));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testQueryModify()
     {
         $test_uri = '/test?query';

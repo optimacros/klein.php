@@ -12,7 +12,7 @@
 namespace Klein\Tests;
 
 use Klein\AbstractRouteFactory;
-use Klein\Route;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * AbstractRouteFactoryTest
@@ -24,14 +24,14 @@ class AbstractRouteFactoryTest extends AbstractKleinTest
      * Helpers
      */
 
-    protected function getDefaultMethodsToMock()
+    protected function getDefaultMethodsToMock(): array
     {
         return array(
             'build',
         );
     }
 
-    protected function getMockForFactory()
+    protected function getMockForFactory(): AbstractRouteFactory|MockObject
     {
         return $this->getMockForAbstractClass('\Klein\AbstractRouteFactory');
     }

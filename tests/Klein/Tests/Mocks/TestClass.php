@@ -14,7 +14,7 @@ namespace Klein\Tests\Mocks;
 class TestClass
 {
 
-    public static function get($request, $response, $app)
+    public static function get($request, $response, $app): void
     {
         echo 'ok';
     }
